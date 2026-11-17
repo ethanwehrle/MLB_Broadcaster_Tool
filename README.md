@@ -1,34 +1,61 @@
 # MLB Broadcaster Tool
 
-A Python toolkit for pulling MLB stats, standings and box scores into a form a broadcaster can use on air: quick lookups, game notes and storylines.
+A chat-based research assistant for MLB broadcasters. Ask a question in plain English and get back a structured report with real data and sources you can use on air.
+
+Example questions:
+
+- "How does Clement do against right-handed batters?"
+- "How do Aaron Judge's last ten at-bats compare to the rest of his season and career?"
+- "Any fun social media trends or topics about Kirk?"
 
 > **Status:** early development. Things will change.
 
-## Features
+## How it works
 
-- [ ] Team and player lookup
-- [ ] Standings snapshot
-- [ ] Box score summaries for the most recent game
-- [ ] Pre-game notes sheet (matchups, streaks, milestones)
-- [ ] Export to Markdown / PDF
+1. **Research agent** (Claude) works out what data the question needs and fetches it.
+2. **Data layer** answers from two sources:
+   - **Historical:** pitch-by-pitch data stored in SQL Server (Docker) and aggregated with SQL
+   - **Live:** the MLB Stats API, for current games and the latest numbers
+3. **Presentation agent** (Claude) turns the results into a report built from UI components (tables, bullet lists, charts) rather than a plain text reply.
 
 ## Tech stack
 
-- Python 3.12+
-- [MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI), a wrapper around the public MLB Stats API
+| Layer    | Tech |
+| -------- | ---- |
+| Frontend | React |
+| Backend  | Python, FastAPI |
+| AI       | Claude API |
+| Data     | SQL Server (Docker), [MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI) |
+
+## Project structure
+
+```
+MLB_Broadcaster_Tool/
+├── backend/
+│   ├── app/              # FastAPI app, agents, data access
+│   ├── tests/            # pytest tests
+│   └── requirements.txt
+├── frontend/             # React app
+├── AGENTS.md             # Instructions for AI coding agents
+├── CLAUDE.md             # Points Claude Code at AGENTS.md
+├── LICENSE
+└── README.md
+```
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 3.12 or newer
-- Git
+- Python 3.12+
+- Node.js 20+ (for the frontend)
+- Docker (for SQL Server)
+- A Claude API key
 
-### Install
+### Backend
 
 ```bash
 git clone https://github.com/<your-username>/MLB_Broadcaster_Tool.git
-cd MLB_Broadcaster_Tool
+cd MLB_Broadcaster_Tool/backend
 
 python -m venv .venv
 # Windows
@@ -39,36 +66,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Quick example
+### Frontend
 
-```python
-import statsapi
-
-statsapi.lookup_team("blue jays")    # Toronto's team id is 141
-print(statsapi.standings())
-
-game_pk = statsapi.last_game(141)
-print(statsapi.boxscore(game_pk))
-```
-
-## Project structure
-
-```
-MLB_Broadcaster_Tool/
-├── src/
-│   └── mlb_broadcaster_tool/   # Application code
-├── tests/                      # Tests (pytest)
-├── AGENTS.md                   # Instructions for AI coding agents
-├── CLAUDE.md                   # Points Claude Code at AGENTS.md
-├── requirements.txt
-├── LICENSE
-└── README.md
-```
+Not set up yet. Instructions will go here once the React app is created.
 
 ## Running tests
 
 ```bash
-pip install pytest
+cd backend
 pytest
 ```
 
@@ -76,13 +81,9 @@ pytest
 
 Issues and pull requests are welcome. For larger changes, open an issue first so we can discuss the approach.
 
-1. Fork the repo and create a branch: `git checkout -b feature/my-change`
-2. Commit your changes with a clear message
-3. Push and open a pull request
-
 ## Data and attribution
 
-Data comes from the MLB Stats API. Use of MLB data is subject to MLB Advanced Media's terms: <http://gdx.mlb.com/components/copyright.txt>. This project is not affiliated with or endorsed by Major League Baseball.
+Live data comes from the MLB Stats API via [MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI) by [Todd Roberts](https://github.com/toddrob99). Use of MLB data is subject to MLB Advanced Media's terms: <http://gdx.mlb.com/components/copyright.txt>. This project is not affiliated with or endorsed by Major League Baseball.
 
 ## License
 
